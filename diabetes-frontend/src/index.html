@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-image: url('diabetes-bg.jpg'); /* Add a diabetes-related background */
+            background-size: cover;
+            color: white;
+        }
+        .container {
+            margin: 50px auto;
+            padding: 20px;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px;
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Diabetes Predictor</h2>
+        <input type="number" id="bmi" placeholder="BMI" required>
+        <input type="number" id="bp" placeholder="Blood Pressure" required>
+        <input type="number" id="glucose" placeholder="Glucose" required>
+        <button onclick="predictDiabetes()">Predict</button>
+        <h3 id="predictionResult"></h3>
+    </div>
+
+    <script>
+        async function predictDiabetes() {
+            const inputData = {
+                BMI: parseFloat(document.getElementById("bmi").value),
+                BloodPressure: parseFloat(document.getElementById("bp").value),
+                Glucose: parseFloat(document.getElementById("glucose").value)
+            };
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/predict", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(inputData)
+                });
+
+                if (!response.ok) {
+                    throw new Error("Server error");
+                }
+
+                const result = await response.json();
+                document.getElementById("predictionResult").innerText = "Prediction: " + result.prediction;
+            } catch (error) {
+                document.getElementById("predictionResult").innerText = "Failed to fetch prediction. Please check the API.";
+                console.error("Error fetching prediction:", error);
+            }
+        }
+    </script>
+</body>
+</html>
